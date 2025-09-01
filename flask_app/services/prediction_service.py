@@ -4,9 +4,8 @@ import pandas as pd
 from flask_app.services.weather_service import WeatherService
 
 # Paths to the .pkl files
-base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../models'))
-scaler_path = os.path.join(base_dir, 'scaler.pkl')
-model_path = os.path.join(base_dir, 'trained_model.pkl')
+scaler_path = os.path.join('flask_app/models', 'scaler2.pkl')
+model_path = os.path.join('flask_app/models', 'trained_model2.pkl')
 
 # Load scaler
 with open(scaler_path, 'rb') as f:

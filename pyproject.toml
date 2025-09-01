@@ -9,6 +9,3 @@ readme = "README.md"
 license = { file = "LICENSE" }
 
 
-
-#$env:MONGODB_URL="mongodb+srv://tanush26jul:Kaliya%40123@cluster0.krz67nr.mongodb.net/"
-
