@@ -53,7 +53,7 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
 def main():
     try:
 
-        params = MainUtils.load_params(params_path='.config/params.yaml')
+        params = MainUtils.load_params(params_path='config/params.yaml')
         test_size = params['data_ingestion']['test_size']
         # test_size = 0.2
 

@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeatherPro - Your Ultimate Weather Companion</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+</head>
+<body>
+    <!-- Navigation -->
+<nav class="navbar fixed-top bg-white shadow-sm">
+    <div class="container d-flex justify-content-between align-items-center py-2">
+        <!-- Logo -->
+        <a href="#home" class="nav-logo d-flex align-items-center text-decoration-none text-dark fw-bold">
+            <i class="fas fa-cloud-sun me-2"></i>
+            WeatherPro
+        </a>
+
+        <!-- Menu items (aligned right) -->
+        <ul class="nav-menu list-unstyled d-flex mb-0">
+            <li class="ms-4"><a href="#home" class="nav-link text-dark">Home</a></li>
+            <li class="ms-4"><a href="#forecast" class="nav-link text-dark">Forecast</a></li>
+            <li class="ms-4"><a href="https://peopleandparks.org/nature-pact/" class="nav-link text-dark">Nature Pact</a></li>
+            <li class="ms-4"><a href="https://zoom.earth/places/india/" class="nav-link text-dark">Live Satellite View</a></li>
+        </ul>
+    </div>
+</nav>
+
+<style>
+/* Navbar */
+.navbar {
+    width: 100%;
+    z-index: 1000;
+    transition: all 0.3s;
+    background-color: #ffffff; /* always light white */
+}
+
+.nav-logo {
+    font-size: 1.4rem;
+    transition: color 0.3s;
+}
+
+.nav-logo:hover {
+    color: #007bff; /* smooth hover effect on logo */
+}
+
+.nav-menu .nav-link {
+    font-weight: 500;
+    transition: color 0.3s, transform 0.3s; /* smooth color + slight move */
+}
+
+.nav-menu .nav-link:hover {
+    color: #007bff;
+    transform: translateY(-2px); /* subtle lift effect */
+}
+
+/* Hamburger hidden on desktop */
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 992px) {
+    .nav-menu {
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background-color: #ffffff;
+        width: 200px;
+        padding: 15px;
+        display: none;
+        border-radius: 5px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .nav-menu.active { display: flex; }
+    .nav-menu li { margin: 10px 0; }
+    .hamburger { display: block; }
+}
+</style>
+
+<script>
+// Mobile menu toggle
+const hamburger = document.querySelector('.hamburger');
+const navMenu = document.querySelector('.nav-menu');
+if(hamburger) {
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+    });
+}
+</script>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Stay Ahead of the Weather</h1>
+                <p class="hero-subtitle">Get accurate forecasts, climate predictions, and personalized weather insights</p>
+                <div class="search-container d-flex align-items-center">
+                    <input type="text" placeholder="Enter your city, state, country..." class="location-input form-control me-2" id="location-input">
+                    <button class="search-btn btn btn-primary me-2" id="search-btn"><i class="fas fa-search"></i></button>
+                    <button class="location-btn btn btn-info ms-auto" id="location-btn">
+                        <i class="fas fa-map-marker-alt"></i> Use My Location
+                    </button>
+                </div>
+            </div>
+            <div class="current-weather-card" id="current-weather-card">
+                <div class="weather-icon" id="current-weather-icon">
+                    <i class="fas fa-sun"></i>
+                </div>
+                <div class="weather-info">
+                    <h3 id="current-city">New Delhi</h3>
+                    <span class="temperature" id="current-temp">28°C</span>
+                    <span class="condition" id="current-condition">Sunny</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
+
+
+
+
+
+
+
+    <!-- Detailed Weather Info Section -->
+<section id="weather-details-section" class="weather-details-section">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Current Weather Details</h2>
+        <div class="weather-details-table">
+            <div class="detail-card">
+                <i class="fas fa-city"></i>
+                <span>City</span>
+                <strong id="detail-city">New Delhi</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-temperature-high"></i>
+                <span>Temperature</span>
+                <strong id="detail-temp">28°C</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-temperature-low"></i>
+                <span>Feels Like</span>
+                <strong id="detail-feels">30°C</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Pressure</span>
+                <strong id="detail-pressure">1015 hPa</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-tint"></i>
+                <span>Humidity</span>
+                <strong id="detail-humidity">60%</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-wind"></i>
+                <span>Wind</span>
+                <strong id="detail-wind">10 km/h NE</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-cloud"></i>
+                <span>Cloudiness</span>
+                <strong id="detail-clouds">20%</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-sun"></i>
+                <span>Sunrise</span>
+                <strong id="detail-sunrise">06:12 AM</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-moon"></i>
+                <span>Sunset</span>
+                <strong id="detail-sunset">06:45 PM</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-eye"></i>
+                <span>Visibility</span>
+                <strong id="detail-visibility">10 km</strong>
+            </div>
+            <div class="detail-card">
+                <i class="fas fa-chart-line"></i>
+                <span>Predicted Visibility</span>
+                <strong id="detail-predicted-visibility">-- m</strong>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+// Populate weather details dynamically
+function populateWeatherDetails(data) {
+    document.getElementById('detail-city').textContent = data.name || "Unknown";
+    document.getElementById('detail-temp').textContent = `${Math.round(data.main.temp)}°C`;
+    document.getElementById('detail-feels').textContent = `${Math.round(data.main.feels_like)}°C`;
+    document.getElementById('detail-pressure').textContent = `${data.main.pressure} hPa`;
+    document.getElementById('detail-humidity').textContent = `${data.main.humidity}%`;
+    document.getElementById('detail-wind').textContent = `${data.wind.speed} km/h ${data.wind.deg}°`;
+    document.getElementById('detail-clouds').textContent = `${data.clouds.all}%`;
+    const sunrise = new Date(data.sys.sunrise * 1000);
+    const sunset = new Date(data.sys.sunset * 1000);
+    document.getElementById('detail-sunrise').textContent = sunrise.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('detail-sunset').textContent = sunset.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    document.getElementById('detail-visibility').textContent = `${(data.visibility/1000).toFixed(1)} km`;
+}
+
+// Example: call after fetching weather
+// fetchCurrentWeather() {
+//    populateWeatherDetails(data);
+// }
+</script>
+
+
+
+
+
+<!-- Elegant Air Pollution Section -->
+<section id="air-pollution-section" class="py-5" style="background: linear-gradient(135deg, #1f2c34, #3a536b); color: #f0f0f0;">
+  <div class="container">
+    <h2 class="text-center mb-5" style="color: #ffd54f; text-shadow: 1px 1px 2px #000;">Air Pollution Details</h2>
+    <div class="row g-4">
+
+      <!-- AQI -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-smog fa-2x mb-2" style="color: #ffeb3b;"></i>
+            <h6 class="card-title">AQI</h6>
+            <p class="card-text fs-5" id="air-aqi">--</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CO -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-cloud fa-2x mb-2" style="color: #4fc3f7;"></i>
+            <h6 class="card-title">CO</h6>
+            <p class="card-text fs-5" id="air-co">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-biohazard fa-2x mb-2" style="color: #ff7043;"></i>
+            <h6 class="card-title">NO</h6>
+            <p class="card-text fs-5" id="air-no">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NO2 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-radiation-alt fa-2x mb-2" style="color: #f44336;"></i>
+            <h6 class="card-title">NO₂</h6>
+            <p class="card-text fs-5" id="air-no2">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- O3 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-sun fa-2x mb-2" style="color: #ffb300;"></i>
+            <h6 class="card-title">O₃</h6>
+            <p class="card-text fs-5" id="air-o3">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SO2 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-cloud-rain fa-2x mb-2" style="color: #ab47bc;"></i>
+            <h6 class="card-title">SO₂</h6>
+            <p class="card-text fs-5" id="air-so2">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PM2.5 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-dust fa-2x mb-2" style="color: #81c784;"></i>
+            <h6 class="card-title">PM2.5</h6>
+            <p class="card-text fs-5" id="air-pm2_5">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- PM10 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-dust fa-2x mb-2" style="color: #4db6ac;"></i>
+            <h6 class="card-title">PM10</h6>
+            <p class="card-text fs-5" id="air-pm10">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- NH3 -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="card bg-dark text-white h-100 shadow-sm hover-shadow" style="border-radius: 12px; transition: transform 0.3s;">
+          <div class="card-body text-center">
+            <i class="fas fa-flask fa-2x mb-2" style="color: #4fc3f7;"></i>
+            <h6 class="card-title">NH₃</h6>
+            <p class="card-text fs-5" id="air-nh3">-- μg/m³</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Hover effect */
+  .hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+  }
+</style>
+
+
+
+
+
+
+    <!-- Smart Weather Suggestions Section -->
+<section class="suggestions py-5" style="background: #f8f9fa;">
+    <div class="container">
+        <h2 class="section-title text-center mb-4" style="color: #1f2c34;">Smart Weather Suggestions</h2>
+        <div class="row g-3" id="suggestions-grid">
+            <!-- Cards will be dynamically injected here -->
+        </div>
+    </div>
+</section>
+
+<style>
+    .suggestion-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .suggestion-card i {
+        font-size: 2rem;
+        margin-bottom: 10px;
+        color: #ff9800;
+    }
+    .suggestion-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 5px;
+        color: #333;
+    }
+    .suggestion-card p {
+        font-size: 0.9rem;
+        color: #555;
+    }
+    .suggestion-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+</style>
+
+<script>
+    // Suggestion pool with conditions
+    const suggestionsPool = [
+        { type: 'rain', icon: 'fas fa-umbrella', title: 'Rainy Day', text: 'Don\'t forget your umbrella! Rain expected today.', condition: data => data.weather.includes('Rain') },
+        { type: 'uv', icon: 'fas fa-sun', title: 'UV Alert', text: 'High UV index today. Apply sunscreen and wear sunglasses.', condition: data => data.uvIndex > 7 },
+        { type: 'cold', icon: 'fas fa-snowflake', title: 'Cold Weather', text: 'Temperature dropping. Layer up and stay warm!', condition: data => data.temp < 10 },
+        { type: 'hot', icon: 'fas fa-temperature-high', title: 'Heat Alert', text: 'High temperature today. Stay hydrated!', condition: data => data.temp > 35 },
+        { type: 'wind', icon: 'fas fa-wind', title: 'Windy Conditions', text: 'Strong winds expected. Secure loose objects outdoors.', condition: data => data.windSpeed > 15 },
+        { type: 'pollution', icon: 'fas fa-smog', title: 'Air Quality Alert', text: 'Poor air quality. Limit outdoor activities.', condition: data => data.aqi >= 3 },
+        { type: 'pm25', icon: 'fas fa-dust', title: 'PM2.5 Alert', text: 'High PM2.5 levels. Wear a mask if going outside.', condition: data => data.pm2_5 > 50 },
+        { type: 'raincoat', icon: 'fas fa-cloud-showers-heavy', title: 'Carry Raincoat', text: 'Light rain possible. Keep your raincoat ready.', condition: data => data.weather.includes('Drizzle') },
+        { type: 'humidity', icon: 'fas fa-tint', title: 'High Humidity', text: 'Humidity is high. Stay cool and hydrated.', condition: data => data.humidity > 80 },
+        { type: 'fog', icon: 'fas fa-smog', title: 'Foggy Conditions', text: 'Low visibility due to fog. Drive carefully.', condition: data => data.visibility < 2000 }
+    ];
+
+    async function fetchWeatherSuggestions() {
+        try {
+            const weatherRes = await fetch('/weather');
+            const weatherData = await weatherRes.json();
+
+            const pollutionRes = await fetch('/air_pollution');
+            const pollutionData = await pollutionRes.json();
+
+            // Map API response to unified data format
+            const mappedData = {
+                temp: Math.round(weatherData.main.temp),
+                weather: weatherData.weather.map(w => w.main),
+                windSpeed: weatherData.wind.speed,
+                humidity: weatherData.main.humidity,
+                visibility: weatherData.visibility,
+                uvIndex: weatherData.uvIndex || 5,
+                aqi: pollutionData.list[0].main.aqi,
+                pm2_5: pollutionData.list[0].components.pm2_5,
+                pm10: pollutionData.list[0].components.pm10
+            };
+
+            // Filter & select top 4 suggestions
+            const selected = suggestionsPool
+                .filter(s => s.condition(mappedData))
+                .slice(0, 4);
+
+            const container = document.getElementById('suggestions-grid');
+            container.innerHTML = '';
+            selected.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'col-12 col-md-6 col-lg-3';
+                div.innerHTML = `
+                    <div class="suggestion-card">
+                        <i class="${s.icon}"></i>
+                        <h3>${s.title}</h3>
+                        <p>${s.text}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+        } catch (err) {
+            console.error('Error fetching weather/pollution data:', err);
+        }
+    }
+
+    // Fetch suggestions on page load
+    window.addEventListener('load', fetchWeatherSuggestions);
+</script>
+
+
+
+
+
+
+
+    <!-- Weather Forecast -->
+    <section id="forecast" class="forecast">
+        <div class="container">
+            <h2 class="section-title">Daily Forecast</h2>
+            <div id="forecast-container" class="forecast-container">
+                <!-- Forecast cards injected here -->
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    <!-- Climate News Preview -->
+<section class="news-preview py-5" style="background: #f4f7fa;">
+    <div class="container">
+        <h2 class="section-title text-center mb-4" style="color:#1f2c34;">Latest Climate News</h2>
+        <div class="row g-3" id="news-grid">
+            <!-- News cards will be dynamically injected here -->
+        </div>
+        <div class="text-center mt-4">
+            <a href="https://news.un.org/en/focus-topic/climate-change" class="btn btn-primary">Read About Climate Change</a>
+        </div>
+    </div>
+</section>
+
+<style>
+.news-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.news-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+}
+.news-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+.news-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.news-content h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: #333;
+}
+.news-content p {
+    font-size: 0.9rem;
+    color: #555;
+    flex-grow: 1;
+}
+.news-meta {
+    font-size: 0.8rem;
+    color: #888;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+@media(max-width:992px){
+    .news-card { flex: 1 1 calc(50% - 15px); }
+}
+@media(max-width:576px){
+    .news-card { flex: 1 1 100%; }
+}
+</style>
+
+<script>
+async function fetchClimateNews(city = '') {
+    try {
+        // Call your backend endpoint that fetches news using the API key stored in environment variables
+        let url = '/climate_news';
+        if (city) url += `?city=${encodeURIComponent(city)}`;
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        const newsGrid = document.getElementById('news-grid');
+        newsGrid.innerHTML = '';
+
+        if (!data.articles || data.articles.length === 0) {
+            newsGrid.innerHTML = '<p class="text-center">No news available at the moment.</p>';
+            return;
+        }
+
+        data.articles.forEach(article => {
+            const card = document.createElement('div');
+            card.className = 'col-12 col-md-6 col-lg-4';
+            card.innerHTML = `
+                <div class="news-card">
+                    <img src="${article.urlToImage || 'https://via.placeholder.com/400x150?text=No+Image'}" alt="News Image">
+                    <div class="news-content">
+                        <h3><a href="${article.url}" target="_blank" style="text-decoration:none; color:#333;">${article.title}</a></h3>
+                        <p>${article.description || ''}</p>
+                        <div class="news-meta">
+                            <span class="date">${new Date(article.publishedAt).toLocaleDateString()}</span>
+                            <span class="source">${article.source.name}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            newsGrid.appendChild(card);
+        });
+
+    } catch (err) {
+        console.error('Error fetching climate news:', err);
+        document.getElementById('news-grid').innerHTML = '<p class="text-center text-danger">Failed to load news.</p>';
+    }
+}
+
+// Call on page load
+window.addEventListener('load', () => fetchClimateNews());
+
+</script>
+
+
+
+
+   
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-cloud-sun"></i> WeatherPro</h3>
+                    <p>Your trusted source for accurate weather forecasts and climate insights.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="https://www.climaterealityproject.org/blog">Blog</a></li>
+                        <li><a href="https://economictimes.indiatimes.com/topic/green-industry">Green Industry</a></li>
+                        <li><a href="https://en.climate-data.org/">Climate Data</a></li>
+                        <li><a href="https://climate.nasa.gov/interactives/climate-time-machine/?intent=021">Climate Time Machine</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Me</h4>
+                    <div class="social-links">
+                        <a href="https://www.linkedin.com/in/tanushgargg/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/tgarg535" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://my-portfolio-9guz.onrender.com" target="_blank"><i class="fas fa-globe"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 WeatherPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Mobile menu toggle
+        // Use already declared hamburger and navMenu from previous script block
+        if (hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navMenu.classList.toggle('active');
+            });
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(anchor.getAttribute('href'));
+                if(target) target.scrollIntoView({ behavior:'smooth', block:'start' });
+            });
+        });
+
+        // Weather Suggestions
+        function updateSuggestions() {
+            const suggestions = document.querySelectorAll('.suggestion-card');
+            suggestions.forEach(card => card.style.opacity = Math.random() > 0.5 ? '1' : '0.7');
+        }
+        setInterval(updateSuggestions, 30000);
+
+        // ---------- MANUAL SEARCH ----------
+        const searchBtn = document.getElementById('search-btn');
+        const locationInput = document.getElementById('location-input');
+
+        async function searchWeather() {
+            const location = locationInput.value.trim();
+            if(!location) return alert("Please enter a location");
+
+            let [city, state, country] = location.split(',').map(s => s.trim());
+
+            try {
+                const response = await fetch('/manual_search', {
+                    method: 'POST',
+                    headers: { 'Content-Type':'application/json' },
+                    body: JSON.stringify({ city, state, country })
+                });
+                const data = await response.json();
+
+                if(data.status === "ok") {
+                    alert(`Location set: ${data.location.name}, ${data.location.country}`);
+                    fetchCurrentWeather();
+                    fetchForecast();
+                } else {
+                    alert(data.error || "Location not found");
+                }
+            } catch(err) {
+                console.error(err);
+                alert("Error fetching location");
+            }
+        }
+
+        searchBtn.addEventListener('click', searchWeather);
+        locationInput.addEventListener('keypress', e => { if(e.key==='Enter') searchWeather(); });
+
+        // ---------- LIVE LOCATION ----------
+        const locationBtn = document.getElementById('location-btn');
+        locationBtn.addEventListener('click', () => {
+            if(!navigator.geolocation) return alert('Geolocation not supported');
+
+            navigator.geolocation.getCurrentPosition(async pos => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+
+                const res = await fetch(`/set_location?lat=${lat}&lon=${lon}`);
+                const data = await res.json();
+
+                if(data.status==="ok") {
+                    fetchCurrentWeather();
+                    fetchForecast();
+                }
+            }, err => { alert("Unable to get your location"); console.error(err); });
+        });
+
+        // ---------- CURRENT WEATHER ----------
+    async function fetchCurrentWeather() {
+        try {
+            const response = await fetch('/weather');
+            const data = await response.json();
+            if(!data) return;
+
+            // Hero section update
+            document.getElementById('current-city').textContent = data.name || "Unknown";
+            document.getElementById('current-temp').textContent = `${Math.round(data.main.temp)}°C`;
+            document.getElementById('current-condition').textContent = data.weather[0].description;
+
+            const iconElem = document.getElementById('current-weather-icon').querySelector('i');
+            const main = data.weather[0].main.toLowerCase();
+            let iconClass = 'fas fa-sun';
+            if(main.includes('rain')) iconClass='fas fa-cloud-showers-heavy';
+            else if(main.includes('cloud')) iconClass='fas fa-cloud';
+            else if(main.includes('snow')) iconClass='fas fa-snowflake';
+            else if(main.includes('storm')||main.includes('thunder')) iconClass='fas fa-bolt';
+            iconElem.className = iconClass;
+
+            // **Update detailed weather section**
+            if(typeof populateWeatherDetails === 'function') {
+                populateWeatherDetails(data);
+            }
+
+            // **Update predicted visibility**
+            const lat = data.coord.lat;
+            const lon = data.coord.lon;
+            updatePredictedVisibility(lat, lon);
+
+        } catch(err) { console.error(err); }
+    }
+
+
+    async function updatePredictedVisibility(lat, lon) {
+    try {
+        const response = await fetch(`/predicted_visibility?lat=${lat}&lon=${lon}`);
+        const data = await response.json();
+
+        if (data.predicted_visibility) {
+            document.getElementById('detail-predicted-visibility').textContent =
+                `${(data.predicted_visibility / 1000).toFixed(1)} km`; // convert meters → km
+        } else {
+            document.getElementById('detail-predicted-visibility').textContent = "N/A";
+        }
+    } catch(err) {
+        console.error(err);
+        document.getElementById('detail-predicted-visibility').textContent = "Error";
+    }
+}
+
+// Fetch and populate air pollution data
+async function fetchAirPollution() {
+    try {
+        const response = await fetch('/air_pollution');
+        const data = await response.json();
+
+        if(!data || !data.list || !data.list[0]) return;
+
+        const ap = data.list[0];
+        const main = ap.main;
+        const comp = ap.components;
+
+        document.getElementById('air-aqi').textContent = main.aqi ?? '--';
+        document.getElementById('air-co').textContent = comp.co ?? '--';
+        document.getElementById('air-no').textContent = comp.no ?? '--';
+        document.getElementById('air-no2').textContent = comp.no2 ?? '--';
+        document.getElementById('air-o3').textContent = comp.o3 ?? '--';
+        document.getElementById('air-so2').textContent = comp.so2 ?? '--';
+        document.getElementById('air-pm2_5').textContent = comp.pm2_5 ?? '--';
+        document.getElementById('air-pm10').textContent = comp.pm10 ?? '--';
+        document.getElementById('air-nh3').textContent = comp.nh3 ?? '--';
+
+    } catch(err) {
+        console.error("Error fetching air pollution data:", err);
+    }
+}
+
+// ---------- FORECAST ----------
+        async function fetchForecast() {
+            try {
+                const response = await fetch('/forecast');
+                const data = await response.json();
+                const forecast = data.forecast || [];
+                const container = document.getElementById('forecast-container');
+                container.innerHTML='';
+
+                const daysMap={};
+                forecast.forEach(entry=>{
+                    const date=new Date(entry.datetime).toLocaleDateString('en-US',{ weekday:'short' });
+                    if(!daysMap[date]) daysMap[date]=[];
+                    daysMap[date].push(entry);
+                });
+
+                Object.keys(daysMap).slice(0,5).forEach(day=>{
+                    const entries=daysMap[day];
+                    const dayRow=document.createElement('div');
+                    dayRow.className='forecast-row';
+                    const dayLabel=document.createElement('div');
+                    dayLabel.className='day-name';
+                    dayLabel.textContent=day;
+                    dayRow.appendChild(dayLabel);
+
+                    const scrollContainer=document.createElement('div');
+                    scrollContainer.className='forecast-scroll';
+                    entries.forEach(e=>{
+                        const card=document.createElement('div');
+                        card.className='forecast-card-horizontal';
+                        card.innerHTML=`
+                            <div class="time">${new Date(e.datetime).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div>
+                            <img src="${e.icon_url}" class="weather-icon" alt="icon">
+                            <div class="temp">${e.temperature_C}°C</div>
+                            <div class="pressure">Pressure: ${e.pressure_hPa} hPa</div>
+                            <div class="humidity">Humidity: ${e.humidity}</div>
+                            <div class="visibility">Vis: ${e.visibility_m ?? 'N/A'} m</div>
+                        `;
+                        scrollContainer.appendChild(card);
+                    });
+                    dayRow.appendChild(scrollContainer);
+                    container.appendChild(dayRow);
+                });
+
+            } catch(err){ console.error(err); }
+        }
+        
+
+
+
+
+
+
+
+
+
+        // ---------- TEMPERATURE CHART ----------
+        function createTempChart() {
+            const canvas = document.getElementById('tempChart');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width=canvas.offsetWidth; canvas.height=200;
+
+            const temps=[22,25,28,31,29,26,24];
+            const maxTemp=Math.max(...temps);
+            const minTemp=Math.min(...temps);
+
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.strokeStyle='#4facfe';
+            ctx.lineWidth=3;
+            ctx.beginPath();
+
+            temps.forEach((temp,i)=>{
+                const x=(i/(temps.length-1))*(canvas.width-40)+20;
+                const y=canvas.height-40-((temp-minTemp)/(maxTemp-minTemp))*(canvas.height-80);
+                if(i===0) ctx.moveTo(x,y);
+                else ctx.lineTo(x,y);
+
+                ctx.fillStyle='#00f2fe';
+                ctx.beginPath();
+                ctx.arc(x,y,4,0,2*Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle='#333';
+                ctx.font='12px Arial';
+                ctx.textAlign='center';
+                ctx.fillText(`${temp}°`,x,y-10);
+            });
+            ctx.stroke();
+        }
+
+        window.onload = () => { fetchCurrentWeather(); fetchForecast(); createTempChart();fetchAirPollution(); };
+        window.addEventListener('resize', createTempChart);
+    </script>
+</body>
+
+
+</html>
+

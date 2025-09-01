@@ -1,0 +1,41 @@
+weather_app/
+│── app.py                       # App factory + blueprint register
+│── wsgi.py                      # WSGI entry (gunicorn/Render)
+│── config.py                    # Non-secret config & defaults
+│── requirements.txt
+│── .env.example                 # Example env vars (copy -> .env locally)
+│
+├── models/                      # Your serialized models (.pkl, .pt, .h5)
+│ ├── visibility_model.pkl
+│ ├── temp_model.pkl
+│ └── rain_model.pkl
+│
+├── services/
+│ ├── weather_service.py         # OpenWeather calls
+│ ├── prediction_service.py      # Loads models & runs predictions
+│ ├── suggestion_service.py      # Rules-based advice (loads rules.json)
+│ ├── news_service.py            # Fetches climate news + MongoDB CRUD
+│ └── __init__.py
+│
+├── utils/
+│ ├── db.py                      # MongoDB client factory
+│ ├── scheduler_job.py           # Standalone job entry for cron (optional)
+│ └── __init__.py
+│
+├── rules.json                   # Human advice rules (editable without code)
+│
+├── blueprints/
+│ ├── home/
+│ │ ├── routes.py                 # “/” main dashboard
+│ │ └── __init__.py
+│ └── news/
+│ ├── routes.py                   # “/news” list, “/tasks/fetch-news” webhook
+│ └── __init__.py
+│
+├── templates/
+│ ├── base.html
+│ ├── index.html
+│ └── news.html
+│
+└── static/
+└── style.css

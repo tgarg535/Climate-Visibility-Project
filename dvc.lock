@@ -1,0 +1,70 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/components/data_ingestion.py
+    deps:
+    - path: config/params.yaml
+      hash: md5
+      md5: cca4ae40f49f94344e8074cf9299b7ab
+      size: 1770
+    - path: src/components/data_ingestion.py
+      hash: md5
+      md5: 95a15ecfa14c1636f49e1334fd7cfe2c
+      size: 2690
+    outs:
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 49c7a4835b03afc66a134e4d2b057819
+      size: 451856
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 078b4a77033051c90ac6cba69512123b
+      size: 1355630
+  data_transformation:
+    cmd: python src/components/data_transformation.py
+    deps:
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 49c7a4835b03afc66a134e4d2b057819
+      size: 451856
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 078b4a77033051c90ac6cba69512123b
+      size: 1355630
+    - path: src/components/data_transformation.py
+      hash: md5
+      md5: 61bb0001de2507460b58820a798d2b21
+      size: 2614
+    outs:
+    - path: data/interim/test_processed.pkl
+      hash: md5
+      md5: 1410c8a138ddefb1f72b63b039f5ac97
+      size: 901171
+    - path: data/interim/train_processed.pkl
+      hash: md5
+      md5: a255e192d458f382fa1665fb2fa230be
+      size: 2703139
+    - path: models/scaler.pkl
+      hash: md5
+      md5: 7a69e8468b39e118e42ee4018f2d7a38
+      size: 738
+  model_training:
+    cmd: python src/components/model_trainer.py
+    deps:
+    - path: config/params.yaml
+      hash: md5
+      md5: cca4ae40f49f94344e8074cf9299b7ab
+      size: 1770
+    - path: data/interim/train_processed.pkl
+      hash: md5
+      md5: a255e192d458f382fa1665fb2fa230be
+      size: 2703139
+    - path: src/components/model_trainer.py
+      hash: md5
+      md5: 4a3980e9cfce86fea7ca014392a61782
+      size: 4283
+    outs:
+    - path: models/trained_model.pkl
+      hash: md5
+      md5: 5c7321e54d316c55605690bd60c509c4
+      size: 23783924

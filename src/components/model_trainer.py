@@ -95,6 +95,13 @@ def main():
         os.makedirs("./models", exist_ok=True)
         
         MainUtils.save_object(trained_model_path, clf)
+
+        # Save model to flask app
+        trained_model_path2 = os.path.join("./flask_app/models", "trained_model.pkl")
+        os.makedirs("./flask_app/models", exist_ok=True)
+
+        MainUtils.save_object(trained_model_path2, clf)
+
         logging.info("Model training workflow completed successfully.")
 
     except Exception as e:

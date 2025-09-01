@@ -43,6 +43,12 @@ def initiate_data_transformation():
         MainUtils.save_object(scaler_path, scaler)
         logging.info('Scaler object saved at %s', scaler_path)
 
+        # Save the scaler object for later use to flask_app
+        scaler_path2 = './flask_app/models/scaler.pkl'
+        os.makedirs(os.path.dirname(scaler_path2), exist_ok=True)
+        MainUtils.save_object(scaler_path2, scaler)
+        logging.info('Scaler object saved at %s', scaler_path2)
+
         # Combine features and target for saving
         train_arr = np.c_[X_train_scaled, np.array(y_train)]
         test_arr = np.c_[X_test_scaled, np.array(y_test)]
