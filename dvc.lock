@@ -33,8 +33,8 @@ stages:
       size: 1355630
     - path: src/components/data_transformation.py
       hash: md5
-      md5: 61bb0001de2507460b58820a798d2b21
-      size: 2614
+      md5: 9e6dec2bc991f1e7ac8b114cd893462d
+      size: 2912
     outs:
     - path: data/interim/test_processed.pkl
       hash: md5
