@@ -35,14 +35,14 @@ jobs:
       - name: Run model tests
         env:
           MONGODB_URL: ${{ secrets.MONGODB_URL }}
-        run: python -m pytest tests/test_model.py
+        run: python -m pytest src/tests/test_model.py
 
       - name: Run Flask app tests
         if: success()
         env:
           NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-        run: python -m pytest tests/test_flask_app.py
+        run: python -m pytest src/tests/test_flask_app.py
 
 
       
