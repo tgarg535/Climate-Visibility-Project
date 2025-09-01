@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, request, jsonify
 import requests
-from .services.weather_service import WeatherService
-from .services.prediction_service import predict_visibility_from_weather
+from flask_app.services.weather_service import WeatherService
+from flask_app.services.prediction_service import predict_visibility_from_weather
 import os
 
 
